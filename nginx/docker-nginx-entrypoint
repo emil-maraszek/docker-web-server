@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+for file in /etc/nginx/conf.d-dist/*.conf; do
+  envsubst '${PHP_CGI_PASS}' < ${file} > ${file/-dist/}
+done
+
+export PS1="\e[0;35mphd \e[0;37m\u container \h \e[0;32m\w \e[0;0m\n$ "
+
+exec "$@"

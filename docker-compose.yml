@@ -1,0 +1,92 @@
+version: '3'
+services:
+
+  dev_php:
+    image: ap/php:7.3
+    container_name: dev_php
+    expose:
+      - '${SSH_PORT}'
+    ports:
+      - '${SSH_PORT}:22'
+    build: ./php
+    environment:
+      - GITHUB_API_TOKEN=${GITHUB_API_TOKEN}
+      - TEST_RUNTIME_PATH=/tmp/runtime
+      - PHP_ENABLE_XDEBUG=${PHP_ENABLE_XDEBUG}
+      - XDEBUG_REMOTE_PORT=${XDEBUG_REMOTE_PORT}
+      - XDEBUG_REMOTE_ENABLE=${XDEBUG_REMOTE_ENABLE}
+      - XDEBUG_REMOTE_CONNECT_BACK=${XDEBUG_REMOTE_CONNECT_BACK}
+      - XDEBUG_IDEKEY=${XDEBUG_IDEKEY}
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ~/.gitconfig:/root/.gitconfig
+      - ${WORKSPACE_DIR}:/var/www
+      - ~/.ssh:/root/ssh:ro
+      - ./php/configs:/root/configs:ro
+
+  dev_nginx:
+    image: ap/nginx:1.15
+    container_name: dev_nginx
+    build: ./nginx
+    environment:
+      - PHP_CGI_PASS=${PHP_CGI_PASS}
+    ports:
+      - '${NGINX_PORT}:80'
+      - '${NGINX_SSL_PORT}:443'
+    volumes:
+      - ./vhosts:/etc/nginx/conf.d-dist
+      - ${WORKSPACE_DIR}:/var/www
+
+  dev_db:
+    image: ap/mariadb:10.3
+    container_name: dev_db
+    build: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: zFtt3Hd727vJdpvq
+    expose:
+      - '${DB_PORT}'
+    ports:
+      - '${DB_PORT}:3306'
+    volumes:
+      - db_mariadb10_3:/var/lib/mysql/mariadb-10.3
+
+  dev_elastic:
+    image: ap/elasticsearch:7
+    container_name: dev_elastic
+    build: ./elastic
+    environment:
+      'discovery.type': 'single-node'
+    depends_on:
+      - dev_db
+
+  dev04_phpmyadmin:
+    image: phpmyadmin/phpmyadmin:fpm-alpine
+    container_name: dev04_phpmyadmin
+    ports:
+      - '${PHPMYADMIN_PORT}:80'
+    depends_on:
+      - dev_db
+    environment:
+      PMA_HOST: dev_db
+      PMA_USER: root
+      PMA_PASSWORD: zFtt3Hd727vJdpvq
+
+  dev_redis:
+    image: ap/redis:5
+    container_name: dev_redis
+    build: ./redis
+    ports:
+      - '6380:6379'
+
+  dev_adminer:
+    image: adminer:latest
+    container_name: dev04_adminer
+    depends_on:
+      - dev_db
+    ports:
+      - '${ADMINER_PORT}:8080'
+
+volumes:
+  db_mariadb10_3:
+  # logować do plików logów nazwanych per projekt w jednym wspólnym katalogu
+  app_logs:

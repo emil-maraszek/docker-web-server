@@ -1,0 +1,13 @@
+xdebug.default_enable=1
+xdebug.cli_color=1
+xdebug.html_errors=2
+xdebug.var_display_max_depth = 8
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 1024
+
+xdebug.remote_port=${XDEBUG_REMOTE_PORT}
+xdebug.remote_enable=${XDEBUG_REMOTE_ENABLE}
+xdebug.remote_connect_back=${XDEBUG_REMOTE_CONNECT_BACK}
+
+xdebug.idekey=${XDEBUG_IDEKEY}
+xdebug.remote_log=/tmp/xdebug/xdebug.log
