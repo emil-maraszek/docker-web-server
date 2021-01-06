@@ -59,9 +59,9 @@ services:
     depends_on:
       - dev_db
 
-  dev04_phpmyadmin:
+  dev_phpmyadmin:
     image: phpmyadmin/phpmyadmin:fpm-alpine
-    container_name: dev04_phpmyadmin
+    container_name: dev_phpmyadmin
     ports:
       - '${PHPMYADMIN_PORT}:80'
     depends_on:
@@ -80,7 +80,7 @@ services:
 
   dev_adminer:
     image: adminer:latest
-    container_name: dev04_adminer
+    container_name: dev_adminer
     depends_on:
       - dev_db
     ports:
