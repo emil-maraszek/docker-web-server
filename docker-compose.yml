@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 services:
 
   dev_php:
@@ -42,7 +42,7 @@ services:
     container_name: dev_db
     build: ./db
     environment:
-      MYSQL_ROOT_PASSWORD: zFtt3Hd727vJdpvq
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
     expose:
       - '${DB_PORT}'
     ports:
@@ -69,7 +69,7 @@ services:
     environment:
       PMA_HOST: dev_db
       PMA_USER: root
-      PMA_PASSWORD: zFtt3Hd727vJdpvq
+      PMA_PASSWORD: '${DB_PASSWORD}'
 
   dev_redis:
     image: ap/redis:5
