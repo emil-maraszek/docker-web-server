@@ -35,6 +35,7 @@ RUN apt-get update && \
             gettext \
             net-tools \
             openssh-server \
+            libmcrypt-dev \
         --no-install-recommends && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -61,6 +62,7 @@ RUN docker-php-ext-configure gd \
         pcntl \
         json \
         xml
+    
 
 # Install PECL extensions
 # see http://stackoverflow.com/a/8154466/291573) for usage of `printf`
@@ -70,6 +72,9 @@ RUN printf "\n" | pecl install \
     docker-php-ext-enable \
         imagick \
         redis
+
+RUN pecl install mcrypt-1.0.2 \
+    && docker-php-ext-enable mcrypt;
 
 # Check if Xdebug extension need to be compiled
 RUN cd /tmp && \
